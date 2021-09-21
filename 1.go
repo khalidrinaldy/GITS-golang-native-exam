@@ -12,7 +12,15 @@ var menu int
 var ID int = 0
 var title, singer, saver string
 var vote float64
-var data = [][4]string{{"ID", "Title", "Singer", "Vote"}}
+
+type database struct {
+	ID     string
+	Title  string
+	Singer string
+	vote   string
+}
+
+var data []database
 
 func add() {
 	fmt.Println("Input singer's album : ")
@@ -23,19 +31,17 @@ func add() {
 	fmt.Println("Input your vote : ")
 	fmt.Scan(&vote)
 	if valid, err := validate(singer); valid {
-		newdata := [4]string{(strconv.Itoa(ID)), title, singer, (strconv.FormatFloat(vote, 'f', 1, 64))}
+		newdata := database{ID: (strconv.Itoa(ID)), Title: title, Singer: singer, vote: (strconv.FormatFloat(vote, 'f', 1, 64))}
 		data = append(data, newdata)
-		newdata = [4]string{}
+		newdata = database{}
 	} else {
 		fmt.Println(err.Error())
 	}
 }
 func showAll() {
-	fmt.Println("List of singer available : \n", len(data))
-	for i := 0; i < len(data); i++ {
-		for j := 0; j < 4; j++ {
-			fmt.Print(data[i][j], "\t\t")
-		}
+	fmt.Println("List of singer available : ", len(data))
+	for _, list := range data {
+		fmt.Println(list.ID, "\t\t", list.Title, "\t\t", list.Singer, "\t\t", list.vote)
 		fmt.Println("")
 	}
 }
@@ -43,8 +49,8 @@ func showAll() {
 func searchID(ID int) int {
 	var index int
 	search := strconv.Itoa(ID)
-	for i := 0; i < len(data); i++ {
-		if data[i][0] == search {
+	for i, list := range data {
+		if list.ID == search {
 			index = i
 			break
 		}
@@ -53,28 +59,27 @@ func searchID(ID int) int {
 }
 
 func deleteID(ID int) {
-	var before, after [][4]string
+	var before, after []database
 	index := searchID(ID)
 	before = data[:index]
 	after = data[index+1:]
-	data = [][4]string{}
-	for i := 0; i < len(before); i++ {
-		data = append(data, before[i])
+	data = data[:0]
+	for _, listbef := range before {
+		data = append(data, listbef)
 	}
-	for i := 0; i < len(after); i++ {
-		data = append(data, after[i])
+	for _, listaft := range after {
+		data = append(data, listaft)
 	}
 }
-
 func searchSinger() {
 	fmt.Println("Search result(s) : ")
-	for i := 0; i < len(data); i++ {
-		matched, _ := regexp.MatchString(`^a|^A`, data[i][2])
+	for _, list := range data {
+		matched, _ := regexp.MatchString(`^a|^A`, list.Singer)
 		if matched == true {
-			fmt.Println("ID : ", data[i][0])
-			fmt.Println("Title : ", data[i][1])
-			fmt.Println("Singer : ", data[i][2])
-			fmt.Println("Vote : ", data[i][3])
+			fmt.Println("ID : ", list.ID)
+			fmt.Println("Title : ", list.Title)
+			fmt.Println("Singer : ", list.Singer)
+			fmt.Println("Vote : ", list.vote)
 		}
 	}
 }
@@ -85,34 +90,35 @@ func stringtoFloat(input string) float64 {
 	}
 	return save
 }
+
 func topthree() {
 	if len(data) < 4 {
 		fmt.Println("Sorry the data is too short, please add more")
 	} else {
-		var third, first, second [4]string
-		for i := 1; i < len(data); i++ {
-			if stringtoFloat(data[i][3]) > stringtoFloat(first[3]) {
+		var third, first, second database
+		for i, list := range data {
+			if stringtoFloat(list.vote) > stringtoFloat(first.vote) {
 				third = second
 				second = first
 				first = data[i]
-			} else if stringtoFloat(data[i][3]) > stringtoFloat(second[3]) {
+			} else if stringtoFloat(list.vote) > stringtoFloat(second.vote) {
 				third = second
 				second = data[i]
-			} else if stringtoFloat(data[i][3]) > stringtoFloat(third[3]) {
+			} else if stringtoFloat(list.vote) > stringtoFloat(third.vote) {
 				third = data[i]
 			}
 		}
 		fmt.Print("Top 3 most voted singer : \n")
-		fmt.Print(data[0][0], "\t\t", data[0][1], "\t\t", data[0][2], "\t\t", data[0][3], "\n")
-		fmt.Print(first[0], "\t\t", first[1], "\t\t", first[2], "\t\t", first[3], "\n")
-		fmt.Print(second[0], "\t\t", second[1], "\t\t", second[2], "\t\t", second[3], "\n")
-		fmt.Print(third[0], "\t\t", third[1], "\t\t", third[2], "\t\t", third[3], "\n")
+		fmt.Print("ID", "\t\t", "Title", "\t\t", "Singer", "\t\t", "Vote", "\n")
+		fmt.Print(first.ID, "\t\t", first.Title, "\t\t", first.Singer, "\t\t", first.vote, "\n")
+		fmt.Print(second.ID, "\t\t", second.Title, "\t\t", second.Singer, "\t\t", second.vote, "\n")
+		fmt.Print(third.ID, "\t\t", third.Title, "\t\t", third.Singer, "\t\t", third.vote, "\n")
 	}
 }
 func countVote() float64 {
 	var count float64 = 0
-	for i := 1; i < len(data); i++ {
-		count = count + stringtoFloat(data[i][3])
+	for _, list := range data {
+		count = count + stringtoFloat(list.vote)
 		fmt.Println(count)
 	}
 	return count
