@@ -60,12 +60,20 @@ func rekursif2(param2 Param2)  {
 			if i == param2.denominator-1 {
 				fmt.Printf("%dx%v", param2.finalDenominator/param2.sliceDenominator[i],supsub.ToSup(strconv.Itoa(i+1)))
 			} else {
-				fmt.Printf("%dx%v + ", param2.finalDenominator/param2.sliceDenominator[i],supsub.ToSup(strconv.Itoa(i+1)))
+				if i==0 {
+					fmt.Printf("%dx + ", param2.finalDenominator/param2.sliceDenominator[i])
+				} else {
+					fmt.Printf("%dx%v + ", param2.finalDenominator/param2.sliceDenominator[i],supsub.ToSup(strconv.Itoa(i+1)))
+				}
 			}
 		}
 		fmt.Printf(")/%d", param2.finalDenominator)
 	} else {
-		fmt.Printf("x%v/%.0f + ", supsub.ToSup(strconv.Itoa(param2.denominator)), math.Pow(float64(param2.denominator),2))
+		if param2.denominator==1 {
+			fmt.Printf("x/%.0f + ", math.Pow(float64(param2.denominator),2))
+		} else {
+			fmt.Printf("x%v/%.0f + ", supsub.ToSup(strconv.Itoa(param2.denominator)), math.Pow(float64(param2.denominator),2))
+		}
 		param2.amount-=1
 		param2.denominator+=1
 		param2.finalDenominator*=int(math.Pow(float64(param2.denominator),2))
