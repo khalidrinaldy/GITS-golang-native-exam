@@ -140,8 +140,7 @@ func main() {
 		var num, err = strconv.Atoi(saver)
 		if err == nil && num > 0 {
 			deleteID(num)
-		}
-		else {
+		} else {
 			fmt.Println("Sorry, please input again")
 		}
 		showAll()
