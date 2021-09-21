@@ -15,7 +15,7 @@ var vote float64
 var data = [][4]string{{"ID", "Title", "Singer", "Vote"}}
 
 func add() {
-	fmt.Println("Input singer title : ")
+	fmt.Println("Input singer's album : ")
 	fmt.Scan(&title)
 	ID++
 	fmt.Println("Input singer : ")
@@ -34,7 +34,7 @@ func showAll() {
 	fmt.Println("List of singer available : \n", len(data))
 	for i := 0; i < len(data); i++ {
 		for j := 0; j < 4; j++ {
-			fmt.Print(data[i][j], "  \t")
+			fmt.Print(data[i][j], "\t\t")
 		}
 		fmt.Println("")
 	}
@@ -103,10 +103,10 @@ func topthree() {
 			}
 		}
 		fmt.Print("Top 3 most voted singer : \n")
-		fmt.Print(data[0][0], "\t", data[0][1], "\t", data[0][2], "\t", data[0][3], "\n")
-		fmt.Print(first[0], "\t", first[1], "\t", first[2], "\t", first[3], "\n")
-		fmt.Print(second[0], "\t", second[1], "\t", second[2], "\t", second[3], "\n")
-		fmt.Print(third[0], "\t", third[1], "\t", third[2], "\t", third[3], "\n")
+		fmt.Print(data[0][0], "\t\t", data[0][1], "\t\t", data[0][2], "\t\t", data[0][3], "\n")
+		fmt.Print(first[0], "\t\t", first[1], "\t\t", first[2], "\t\t", first[3], "\n")
+		fmt.Print(second[0], "\t\t", second[1], "\t\t", second[2], "\t\t", second[3], "\n")
+		fmt.Print(third[0], "\t\t", third[1], "\t\t", third[2], "\t\t", third[3], "\n")
 	}
 }
 func countVote() float64 {
@@ -140,6 +140,9 @@ func main() {
 		var num, err = strconv.Atoi(saver)
 		if err == nil && num > 0 {
 			deleteID(num)
+		}
+		else {
+			fmt.Println("Sorry, please input again")
 		}
 		showAll()
 		main()
