@@ -5,19 +5,17 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 )
 
-var menu int
+var menu, saver, vote int
 var ID int = 0
-var title, singer, saver string
-var vote float64
+var title, singer string
 
 type database struct {
-	ID     string
+	ID     int
 	Title  string
 	Singer string
-	vote   string
+	vote   int
 }
 
 var data []database
@@ -31,24 +29,27 @@ func add() {
 	fmt.Println("Input your vote : ")
 	fmt.Scan(&vote)
 	if valid, err := validate(singer); valid {
-		newdata := database{ID: (strconv.Itoa(ID)), Title: title, Singer: singer, vote: (strconv.FormatFloat(vote, 'f', 1, 64))}
+		newdata := database{ID: ID, Title: title, Singer: singer, vote: vote}
 		data = append(data, newdata)
 		newdata = database{}
 	} else {
+		ID--
 		fmt.Println(err.Error())
 	}
 }
 func showAll() {
 	fmt.Println("List of singer available : ", len(data))
+	fmt.Println("ID", "\t\t", "Title", "\t\t", "Singer", "\t\t", "Vote")
+	fmt.Println("-----------------------------------------------------")
 	for _, list := range data {
 		fmt.Println(list.ID, "\t\t", list.Title, "\t\t", list.Singer, "\t\t", list.vote)
-		fmt.Println("")
+		fmt.Println("-----------------------------------------------------")
 	}
 }
 
 func searchID(ID int) int {
 	var index int
-	search := strconv.Itoa(ID)
+	search := ID
 	for i, list := range data {
 		if list.ID == search {
 			index = i
@@ -76,50 +77,47 @@ func searchSinger() {
 	for _, list := range data {
 		matched, _ := regexp.MatchString(`^a|^A`, list.Singer)
 		if matched == true {
+			fmt.Println("--------------")
 			fmt.Println("ID : ", list.ID)
 			fmt.Println("Title : ", list.Title)
 			fmt.Println("Singer : ", list.Singer)
 			fmt.Println("Vote : ", list.vote)
+			fmt.Println("--------------")
 		}
 	}
 }
-func stringtoFloat(input string) float64 {
-	var save float64
-	if s, err := strconv.ParseFloat(input, 64); err == nil {
-		save = s
-	}
-	return save
-}
 
 func topthree() {
-	if len(data) < 4 {
+	if len(data) < 3 {
 		fmt.Println("Sorry the data is too short, please add more")
 	} else {
 		var third, first, second database
 		for i, list := range data {
-			if stringtoFloat(list.vote) > stringtoFloat(first.vote) {
+			if list.vote > first.vote {
 				third = second
 				second = first
 				first = data[i]
-			} else if stringtoFloat(list.vote) > stringtoFloat(second.vote) {
+			} else if list.vote > second.vote {
 				third = second
 				second = data[i]
-			} else if stringtoFloat(list.vote) > stringtoFloat(third.vote) {
+			} else if list.vote > third.vote {
 				third = data[i]
 			}
 		}
 		fmt.Print("Top 3 most voted singer : \n")
 		fmt.Print("ID", "\t\t", "Title", "\t\t", "Singer", "\t\t", "Vote", "\n")
+		fmt.Println("-----------------------------------------------------")
 		fmt.Print(first.ID, "\t\t", first.Title, "\t\t", first.Singer, "\t\t", first.vote, "\n")
+		fmt.Println("-----------------------------------------------------")
 		fmt.Print(second.ID, "\t\t", second.Title, "\t\t", second.Singer, "\t\t", second.vote, "\n")
+		fmt.Println("-----------------------------------------------------")
 		fmt.Print(third.ID, "\t\t", third.Title, "\t\t", third.Singer, "\t\t", third.vote, "\n")
 	}
 }
-func countVote() float64 {
-	var count float64 = 0
+func countVote() int {
+	var count int = 0
 	for _, list := range data {
-		count = count + stringtoFloat(list.vote)
-		fmt.Println(count)
+		count = count + list.vote
 	}
 	return count
 }
@@ -143,9 +141,8 @@ func main() {
 	} else if menu == 2 {
 		fmt.Println("What ID you want to delete? : ")
 		fmt.Scan(&saver)
-		var num, err = strconv.Atoi(saver)
-		if err == nil && num > 0 {
-			deleteID(num)
+		if saver > 0 {
+			deleteID(saver)
 		} else {
 			fmt.Println("Sorry, please input again")
 		}
